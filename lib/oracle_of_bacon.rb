@@ -35,17 +35,14 @@ class OracleOfBacon
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
       Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
       Net::ProtocolError => e
-      # convert all of these into a generic OracleOfBacon::NetworkError,
-      #  but keep the original error message
-      # your code here
+      raise OracleOfBacon::NetworkError, e
     end
-    # your code here: create the OracleOfBacon::Response object
+
+    @response = OracleOfBacon::Response.new(xml)
   end
 
   def make_uri_from_arguments
     @uri = "http://oracleofbacon.org/cgi-bin/xml?p=" + CGI.escape(@api_key) + "&a=" + CGI.escape(@from) + "&b=" + CGI.escape(@to)
-    # your code here: set the @uri attribute to properly-escaped URI
-    #   constructed from the @from, @to, @api_key arguments
   end
       
   class Response
@@ -68,9 +65,6 @@ class OracleOfBacon
       else
 	@type = :unknown
         @data = "unknown response type"
-      # your code here: 'elsif' clauses to handle other responses
-      # for responses not matching the 3 basic types, the Response
-      # object should have type 'unknown' and data 'unknown response'         
       end
     end
     def parse_error_response
